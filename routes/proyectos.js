@@ -14,7 +14,20 @@ router.post('/',
 
 router.get('/',
     auth,
-    proyectoController.crearProyecto
+    proyectoController.obtenerProyectos
+);
+
+router.put('/:id',
+    auth,
+    [
+        check('nombre', 'El nombre del proyecto es obligatorio').not().isEmpty()
+    ],
+    proyectoController.actualizarProyecto
+);
+
+router.delete('/:id',
+    auth,
+    proyectoController.eliminarProyecto
 );
 
 
