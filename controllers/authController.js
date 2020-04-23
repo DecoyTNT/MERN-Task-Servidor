@@ -19,7 +19,7 @@ exports.autenticarUsuario = async (req, res) => {
 
         if (!usuario) {
             return res.status(400).json({
-                msg: 'El usuario no existe'
+                msg: 'Datos de acceso incorrectos'
             })
         }
 
@@ -27,7 +27,7 @@ exports.autenticarUsuario = async (req, res) => {
 
         if (!passCorrecto) {
             return res.status(400).json({
-                msg: 'El password es incorrecto'
+                msg: 'Datos de acceso incorrectos'
             })
         }
 
@@ -38,19 +38,31 @@ exports.autenticarUsuario = async (req, res) => {
         };
 
         jwt.sign(payload, process.env.SECRETA, {
-            // 1000 milisegundos
             // 60 segundos,
             // 60 minutos
-            expiresIn: 1000 * 60 * 60
+            expiresIn: 60 * 60
         }, (err, token) => {
             if (err) throw err;
             res.json({
-                usuario,
                 token
             })
         });
 
     } catch (error) {
+        console.log(error);
+        res.status(500).send(`Error: ${error}`);
+    }
+}
 
+// Obtiene el usuario autenticado
+exports.usuarioAutenticado = async (req, res) => {
+    try {
+        const usuario = await Usuario.findById(req.usuario.id).select('-password');
+        res.json({
+            usuario
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(`Error: ${error}`);
     }
 }
